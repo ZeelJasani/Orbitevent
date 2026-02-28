@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🚀 Orbitevent
 
-First, run the development server:
+### AI-Powered Event Management Platform
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+*Plan, manage, and scale exceptional events with intelligent automation.*
+
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
+[![MongoDB](https://img.shields.io/badge/MongoDB-green?logo=mongodb)](https://mongodb.com)
+[![Stripe](https://img.shields.io/badge/Stripe-Payments-635bff?logo=stripe)](https://stripe.com)
+[![Clerk](https://img.shields.io/badge/Clerk-Auth-6c47ff?logo=clerk)](https://clerk.com)
+
+</div>
+
+---
+
+## ✨ Features
+
+### 🤖 AI-Powered Event Generation
+
+Generate complete event details from a single prompt using **Google Gemini AI** — auto-fills title, description, location, category, dates, and suggests multi-tiered ticket pricing.
+
+### 🎫 Multi-Tiered Ticketing
+
+Create unlimited ticket tiers (Early Bird, General Admission, VIP) with custom names, prices, and capacities. Each tier is independently tracked.
+
+### 💳 Stripe Payment Integration
+
+Secure payment processing with a robust dual-fulfillment architecture:
+
+- **Webhook** (primary) — activates tickets after successful payment
+- **Verify API** (fallback) — secondary confirmation on the success page
+- Pending ticket lifecycle: `pending → active → scanned`
+
+### 📱 QR Code Tickets & Mobile Check-in
+
+Every purchased ticket gets a unique QR code. Organizers can scan tickets at the door using the built-in mobile check-in scanner.
+
+### ✍️ Rich Text Editor
+
+Event descriptions support **bold**, *italic*, headings, bullet lists, and ordered lists via the TipTap rich text editor.
+
+### 🎨 Premium Dark UI
+
+Vercel/Linear-inspired design system with glassmorphic navbar, smooth animations, OKLCH dark mode, and Geist typography.
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 16 (App Router, Server Actions) |
+| **Language** | TypeScript 5 |
+| **Styling** | Tailwind CSS 4 + Shadcn UI |
+| **Authentication** | Clerk |
+| **Database** | MongoDB + Mongoose |
+| **Payments** | Stripe Checkout + Webhooks |
+| **AI** | Google Gemini API |
+| **Rich Text** | TipTap Editor |
+| **QR Code** | react-qr-code + @yudiel/react-qr-scanner |
+
+---
+
+## 📁 Project Structure
+
+```
+orbitevent/
+├── app/
+│   ├── page.tsx                    # Landing page
+│   ├── explore/                    # Event discovery
+│   ├── create/                     # Create event (with AI)
+│   ├── events/[id]/                # Event details
+│   │   ├── edit/                   # Edit event
+│   │   └── scan/                   # QR check-in scanner
+│   ├── dashboard/                  # User dashboard
+│   │   ├── tickets/                # My tickets
+│   │   └── events/                 # My events
+│   ├── payment/
+│   │   ├── success/                # Payment success + verification
+│   │   └── cancel/                 # Payment cancelled
+│   └── api/
+│       ├── webhook/stripe/         # Stripe webhook handler
+│       └── verify-payment/         # Payment verification fallback
+├── actions/                        # Server actions
+│   ├── tickets.ts                  # Registration + ticket management
+│   ├── queries.ts                  # Data fetching
+│   ├── event.ts                    # Event CRUD
+│   ├── generate.ts                 # AI event generation
+│   └── scan.ts                     # QR check-in logic
+├── models/                         # Mongoose schemas
+│   ├── Event.ts
+│   ├── Ticket.ts
+│   └── User.ts
+├── components/                     # UI components
+│   ├── navbar.tsx
+│   ├── register-button.tsx
+│   ├── rich-text-editor.tsx
+│   └── ui/                         # Shadcn UI primitives
+└── lib/                            # Utilities
+    ├── mongodb.ts                  # DB connection
+    ├── stripe.ts                   # Lazy-loaded Stripe SDK
+    └── utils.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 💳 Payment Flow
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+User clicks "Buy — ₹500"
+       │
+       ▼
+  ┌──────────┐
+  │ Free?     │
+  └────┬──────┘
+  Yes  │  No
+  │    │
+  ▼    ▼
+Active  Create pending ticket
+ticket  + Stripe Checkout
+  │         │
+  ▼         ▼
+Dashboard  Stripe hosted page
+               │
+          ┌────┴────┐
+          │ Paid?    │
+          └────┬────┘
+          Yes  │  No
+          │    │
+          ▼    ▼
+       Webhook  /payment/cancel
+       activates  (auto-cleanup)
+       ticket
+          │
+          ▼
+       /payment/success
+       (verify fallback)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
